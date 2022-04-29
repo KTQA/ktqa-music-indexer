@@ -2,14 +2,18 @@ require 'rubygems'
 require 'mp3info'
 require 'csv'
 
+# TODO: Test against a valid folder structure
+
 artist = ''
 title = ''
 album = ''
 length = ''
+dir = ''
 csv_string = ''
 
 # This is the root folderPath we'll use to scan Album directories
-folderPath = "FOLDER_PATH_HERE"
+# folderPath = "FOLDER_PATH_HERE"
+folderPath = "F:/Temp"
 
 # Generates a CSV file from a folder of music tracks
 puts "\n\nGetting ID3 info..."
@@ -26,40 +30,50 @@ Dir.chdir("#{folderPath}") do
   end
   
   # Enumerates all the directories in our pwd and drops them in dirs
-  dirs = Dir.glob("**/")
+  dir_artists = Dir.glob("**/")
 
   # Iterate over each subdirectory
-  dirs.each do |dir|
+  dir_artists.each do |dir_artist|
 
-    # Announces which album we're working on
-    puts "* Starting album #{dir}..."
+    # Announces which album we're working on to console
+    puts "* Starting artist #{dir_artist}..."
 
-    # Get each file within a subdirectory
-    Dir.foreach("./#{dir}") do |filename|
+    # Gets a glob of our subdirectories under the artist - these are albums
+    dir_albums = Dir.glob("./#{dir_artist}/*").select {|f| File.directory? f}
 
-      # Skip this iteration if it
-      next if filename == '.' or filename == '..'
+    dir_albums.each do |dir_album|
 
-      # If it's a MP3 or a FLAC we pull the id3
-      if File.extname(filename) == '.mp3' or File.extname(filename == '.flac') do
+      dir = "#{dir_artist}/#{dir_album}"
 
-        # Use mp3info gem to pull out id3 info
-        Mp3Info.open("./#{dir}/#{filename}") do |mp3|
-          artist = mp3.tag.artist.to_s
-          title = mp3.tag.title.to_s
-          album = mp3.tag.album.to_s
-          length = mp3.length.to_i
-          seconds = length % 60
-          minutes = (length / 60) % 60
-          length = "#{minutes.to_s.rjust(2, "0")}:#{seconds.to_s.rjust(2, "0")}"
-        end
+      # Get each file within a subdirectory
+      Dir.foreach("./#{dir}") do |filename|
 
-        # add info to CSV string
-        csv_string += CSV.generate do |csv|
-          csv << [artist, title, album, length, dir]
+        # Skip this iteration if it
+        next if filename == '.' or filename == '..'
+
+        # If it's a MP3 or a FLAC we pull the id3
+        if File.extname(filename) == '.mp3' or File.extname(filename == '.flac') do
+
+          # Use mp3info gem to pull out id3 info
+          Mp3Info.open("./#{dir}/#{filename}") do |mp3|
+            artist = mp3.tag.artist.to_s
+            title = mp3.tag.title.to_s
+            album = mp3.tag.album.to_s
+            length = mp3.length.to_i
+            seconds = length % 60
+            minutes = (length / 60) % 60
+            length = "#{minutes.to_s.rjust(2, "0")}:#{seconds.to_s.rjust(2, "0")}"
+          end
+
+          # add info to CSV string
+          csv_string += CSV.generate do |csv|
+            csv << [artist, title, album, length, dir]
+          end
         end
       end
     end
+
+    puts "... #{dir_artist} complete. *"
   end
   # Outputs our CSV to console
   # TODO: Save CSV file
