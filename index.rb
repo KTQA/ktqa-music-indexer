@@ -76,6 +76,6 @@ dir_artists.each do |dir_artist|
 end
 # Outputs our CSV to console
 # TODO: Save CSV file
-puts csv_string
+File.open("#{__dir__}/music_library.csv", 'w') { |file| file.write(csv_string) }
 
 puts 'Process complete!'.cyan
