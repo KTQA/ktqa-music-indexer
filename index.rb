@@ -6,6 +6,8 @@ require 'csv'
 
 require './colorize.rb'
 
+# TODO: Add extensions for each album?
+
 artist = ''
 title = ''
 album = ''
@@ -13,9 +15,9 @@ length = ''
 dir = ''
 csv_string = ''
 
-# This is the root folderPath we'll use to scan Album directories
-# folderPath = "FOLDER_PATH_HERE"
-folder_path = '//192.168.0.16/Media/Music'
+# This is the root folder_path we'll use to scan Album directories
+folder_path = "FOLDER_PATH_HERE"
+
 
 # Generates a CSV file from a folder of music tracks
 puts "\n\nGetting ID3 info for all artists and albums...".blink
