@@ -8,9 +8,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git branch: 'main',
-          credentialsId: 'github-ssh-auth',
-          url: 'git@github.com:KTQA/ktqa-music-indexer.git'
+        checkout scm
       }
     }
     stage('Lint Ruby') {
