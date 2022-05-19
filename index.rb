@@ -4,7 +4,7 @@ require 'rubygems'
 require 'mp3info'
 require 'csv'
 
-require './colorize.rb'
+require './colorize'
 
 # TODO: Add extensions for each album?
 
@@ -16,8 +16,7 @@ dir = ''
 csv_string = ''
 
 # This is the root folder_path we'll use to scan Album directories
-folder_path = "FOLDER_PATH_HERE"
-
+folder_path = 'FOLDER_PATH_HERE'
 
 # Generates a CSV file from a folder of music tracks
 puts "\n\nGetting ID3 info for all artists and albums...".blink
@@ -33,7 +32,7 @@ csv_string = CSV.generate do |csv|
 end
 
 # Enumerates all the directories in our pwd and drops them in dirs
-dir_artists = Dir.glob('*').select {|f| File.directory? f}
+dir_artists = Dir.glob('*').select { |f| File.directory? f }
 
 # Iterate over each subdirectory
 dir_artists.each do |dir_artist|
@@ -41,19 +40,18 @@ dir_artists.each do |dir_artist|
   puts "\n\n* Starting artist #{dir_artist}...".green
 
   # Gets a glob of our subdirectories under the artist - these are albums
-  dir_albums = Dir.glob("#{dir_artist}/*").select {|f| File.directory? f}
+  dir_albums = Dir.glob("#{dir_artist}/*").select { |f| File.directory? f }
 
   dir_albums.each do |dir_album|
     puts "** #{dir_album}".magenta
-    dir = "#{dir_album}"
+    dir = dir_album.to_s
 
     # Get each file within a subdirectory
     Dir.foreach("#{dir_album}/") do |filename|
-
-      next if filename == '.' or filename == '..'
+      next if (filename == '.') || (filename == '..')
 
       # If it's a MP3 or a FLAC we pull the id3
-      if File.extname(filename) == '.mp3' or File.extname(filename) == '.flac'
+      if (File.extname(filename) == '.mp3') || (File.extname(filename) == '.flac')
 
         # Use mp3info gem to pull out id3 info
         Mp3Info.open("./#{dir}/#{filename}") do |mp3|
